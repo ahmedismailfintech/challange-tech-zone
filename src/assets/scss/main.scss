@@ -17,7 +17,7 @@ body {
 
     &__container {
         background-color: #ccc;
-        padding: 0 16px;
+        padding: 0 16px !important;
         width: 600px;
         height: 720px;
     }
@@ -27,6 +27,26 @@ body {
             color: #444;
             text-align: right;
             margin-inline-start: 10px !important;
+            height: calc(720px / 25);
+            p {
+                height: 100%;
+            }
+        }
+    }
+    &__item {
+        border: 1px solid #ccc;
+        // border-radius: 5px;
+        padding: 10px !important;
+        border-left: 5px solid green;
+        text-align: left;
+        background-color: #fff;
+        &__title {
+            color: green;
+            font-weight: bold;
+        }
+        &__text {
+            font-size: 14px;
+            color: #ccc;
         }
     }
 }

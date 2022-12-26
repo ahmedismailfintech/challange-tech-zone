@@ -14,14 +14,37 @@
         </p>
       </div>
     </div>
-    <div class="events__container"></div>
+    <div class="events__container">
+      <template v-for="({ start, end }, index) in events" :key="index">
+        <eventItem
+          :style="{
+            transform: `translateY(${start}px)`,
+            height: `${end - start}px`
+          }"
+        />
+      </template>
+    </div>
   </main>
 </template>
 
 <script setup>
+import { transform } from "@vue/compiler-core";
+import { defineAsyncComponent } from "@vue/runtime-core";
+import { reactive, onMounted } from "vue";
+
+const eventItem = defineAsyncComponent(() => import("./EventItem.vue"));
 let x = 30; //minutes interval
 let times = []; // time array
+const events = reactive([]);
 
+const getEvents = async () => {
+  const res = await fetch("http://localhost:3000/events");
+  const data = await res.json();
+  events.push(...data);
+};
+onMounted(() => {
+  getEvents();
+});
 for (let i = 0; i <= 720; i++) {
   const date = new Date(new Date().setHours(9));
   if (i % x == 0) {

@@ -18,8 +18,9 @@
       <template v-for="({ start, end }, index) in events" :key="index">
         <eventItem
           :style="{
-            transform: `translateY(${start}px)`,
-            height: `${end - start}px`
+            top: `${start}px`,
+            height: `${end - start}px`,
+            width: calcWidth(index)
           }"
         />
       </template>
@@ -41,6 +42,16 @@ const getEvents = async () => {
   const res = await fetch("http://localhost:3000/events");
   const data = await res.json();
   events.push(...data);
+};
+const calcWidth = (index) => {
+  if (
+    events[index]["start"] <= events[events.length - 1]["start"] &&
+    events[index]["end"] <= events[events.length - 1]["end"]
+  ) {
+    return "90%";
+  } else {
+    return "50%";
+  }
 };
 onMounted(() => {
   getEvents();

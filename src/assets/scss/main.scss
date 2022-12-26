@@ -1,0 +1,32 @@
+* {
+    padding: 0 !important;
+    margin: 0 !important;
+    box-sizing: border-box;
+    font-family: "Bahij TheSansArabic" !important;
+}
+
+body {
+    background-color: #fff;
+}
+
+.events {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    height: 100vh;
+    align-content: center;
+
+    &__container {
+        background-color: #ccc;
+        padding: 0 16px;
+        width: 600px;
+        height: 720px;
+    }
+    &__timer {
+        padding-right: 10px !important;
+        &__time {
+            color: #444;
+            text-align: right;
+            margin-inline-start: 10px !important;
+        }
+    }
+}

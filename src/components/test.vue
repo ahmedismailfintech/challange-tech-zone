@@ -42,34 +42,42 @@ let times = []; // time array
 const container_width = 600 - 32;
 const start_from_left = 16;
 const events = reactive([]);
-
+let counter = 0;
 const getEvents = async () => {
   const res = await fetch("http://localhost:3000/events");
   const data = await res.json();
-  let counter = 0;
-  const items = data.map((el) => ({
-    ...el,
-    left: start_from_left,
-    top: el.start,
-    width: container_width,
-    height: el.end - el.start
-  }));
-  calcRange(items);
+
+  const items = data.map((mapEl, mapIndex) => {
+    const filterItems = data.filter((el, index) => index !== mapIndex);
+    calcRange(filterItems, mapEl);
+    // return {
+    //   ...el,
+    //   left: start_from_left,
+    //   top: el.start,
+    //   width: container_width,
+    //   height: el.end - el.start
+    // };
+  });
+  // calcRange(items);
   events.push(...items);
 };
-const calcRange = (items) => {
+const calcRange = (items, el) => {
   for (let i = 0; i < items.length; i++) {
-    for (let j = i + 1; j < items.length; j++) {
-      let prevEvent = items[i];
-      let nextEvent = items[j];
-      console.log(prevEvent);
-      console.log(nextEvent);
-      if (
-        prevEvent["start"] >= nextEvent["start"] &&
-        prevEvent["end"] <= nextEvent["end"]
-      ) {
-        prevEvent["width"] = 222;
-      }
+    if (el["start"] >= items[i]["start"] && el["end"] <= items[i]["end"]) {
+    } else if (
+      el["start"] <= items[i]["start"] &&
+      el["end"] <= items[i]["end"] &&
+      el["end"] >= items[i]["start"]
+    ) {
+    } else if (
+      el["start"] >= items[i]["start"] &&
+      el["end"] >= items[i]["end"] &&
+      el["end"] <= items[i]["start"]
+    ) {
+    } else if (
+      el["start"] <= items[i]["start"] &&
+      el["end"] >= items[i]["end"]
+    ) {
     }
   }
 };

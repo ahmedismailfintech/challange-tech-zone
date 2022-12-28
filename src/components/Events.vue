@@ -67,7 +67,6 @@ const handleEvents = (events = []) => {
       timeSlots[j].push(event.id);
     }
   }
-  console.log(timeSlots);
   for (let i = 0; i < 720; i++) {
     let next_index = 0;
     let timeSlotsLength = timeSlots[i].length;

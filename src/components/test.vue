@@ -33,65 +33,105 @@
 </template>
 
 <script setup>
-import { defineAsyncComponent } from "@vue/runtime-core";
-import { reactive, onMounted } from "vue";
+var Calendar = (function () {
+  var layOutDay = function (events) {
+    var eventsLength = events.length;
+    var timeslots = [];
+    var event, i, j;
 
-const eventItem = defineAsyncComponent(() => import("./EventItem.vue"));
-let x = 30; //minutes interval
-let times = []; // time array
-const container_width = 600 - 32;
-const start_from_left = 16;
-const events = reactive([]);
-let counter = 0;
-const getEvents = async () => {
-  const res = await fetch("http://localhost:3000/events");
-  const data = await res.json();
+    // Step 0: Sort events by id.
+    events = events.sort(function (a, b) {
+      return a.id - b.id;
+    });
+    console.log(events);
 
-  const items = data.map((mapEl, mapIndex) => {
-    const filterItems = data.filter((el, index) => index !== mapIndex);
-    calcRange(filterItems, mapEl);
-    // return {
-    //   ...el,
-    //   left: start_from_left,
-    //   top: el.start,
-    //   width: container_width,
-    //   height: el.end - el.start
-    // };
-  });
-  // calcRange(items);
-  events.push(...items);
-};
-const calcRange = (items, el) => {
-  for (let i = 0; i < items.length; i++) {
-    if (el["start"] >= items[i]["start"] && el["end"] <= items[i]["end"]) {
-    } else if (
-      el["start"] <= items[i]["start"] &&
-      el["end"] <= items[i]["end"] &&
-      el["end"] >= items[i]["start"]
-    ) {
-    } else if (
-      el["start"] >= items[i]["start"] &&
-      el["end"] >= items[i]["end"] &&
-      el["end"] <= items[i]["start"]
-    ) {
-    } else if (
-      el["start"] <= items[i]["start"] &&
-      el["end"] >= items[i]["end"]
-    ) {
+    // Step 1: Initialize timeslots.
+    for (i = 0; i < 720; i++) {
+      timeslots[i] = [];
     }
-  }
-};
+    // Step 2: Arrange the events by timeslot.
+    for (i = 0; i < eventsLength; i++) {
+      event = events[i];
 
-onMounted(() => {
-  getEvents();
-});
-for (let i = 0; i <= 720; i++) {
-  const date = new Date(new Date().setHours(9));
-  if (i % x == 0) {
-    date.setMinutes(i, 0, 0);
-    times.push(
-      date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
-    );
-  }
-}
+      // Safety first.
+      if (event.start > event.end) {
+        var temp = event.start;
+        event.start = event.end;
+        event.end = temp;
+      }
+
+      for (j = event.start; j < event.end; j++) {
+        timeslots[j].push(event.id);
+      }
+    }
+
+    // Step 3: Get each event it's horizontal position,
+    //         and figure out the max number of conflicts it has.
+    for (i = 0; i < 720; i++) {
+      var next_hindex = 0;
+      var timeslotLength = timeslots[i].length;
+
+      // If there's at least one event in the timeslot,
+      // we know how many events we will have going across for that slot.
+      if (timeslotLength > 0) {
+        // Store the greatest concurrent event count (cevc) for each event.
+        for (j = 0; j < timeslotLength; j++) {
+          event = events[timeslots[i][j] - 1];
+
+          if (!event.cevc || event.cevc < timeslotLength) {
+            event.cevc = timeslotLength;
+
+            // Now is also a good time to coordinate horizontal ordering.
+            // If this is our first conflict, start at the current index.
+            if (!event.hindex) {
+              event.hindex = next_hindex;
+
+              // We also want to boost the index,
+              // so that whoever we conflict with doesn't get the same one.
+              next_hindex++;
+            }
+          }
+        }
+      }
+    }
+    console.log(timeslots);
+
+    // Step 4: Calculate event coordinates and dimensions,
+    // and generate DOM.
+    for (i = 0; i < events.length; i++) {
+      event = events[i];
+
+      // Height and y-coordinate are already known.
+      event.pxh = event.end - event.start;
+      event.pxy = event.start;
+
+      // Width is based on calendar width and the cevc.
+      event.pxw = 600 / event.cevc;
+
+      // Height uses the same calendar/cevc figure,
+      // multiplied by the horizontal index to prevent overlap.
+      event.pxx = event.hindex * event.pxw;
+
+      // Now, the easy part.
+      var div = document.createElement("div");
+      div.style.width = event.pxw + "px";
+      div.style.height = event.pxh + "px";
+      div.style.top = event.pxy + "px";
+      div.style.left = event.pxx + "px";
+      div.style.position = "absolute";
+      div.style.background =
+        "#" + Math.floor(Math.random() * 16777215).toString(16);
+      // (random colours will make the events easy to tell apart.)
+
+      console.log(document);
+      document.getElementById("calander").appendChild(div);
+    }
+  };
+
+  return {
+    layOutDay: layOutDay
+  };
+})();
+
+Calendar.layOutDay(events);
 </script>

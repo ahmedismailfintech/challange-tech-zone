@@ -8,6 +8,9 @@
 body {
     background-color: #fff;
 }
+ul {
+    list-style: none;
+}
 
 .events {
     display: grid;
@@ -16,22 +19,35 @@ body {
     align-content: center;
 
     &__container {
-        background-color: #ccc;
+        background: #ececec;
+        border-left: 1px solid #d5d5d5;
         padding: 0 16px !important;
         width: 600px;
         height: 720px;
         position: relative;
         overflow: hidden !important;
+        float: left;
     }
+    // li {
+    //     height: calc(720px / 25);
+    //     padding: 2px 0 0 0;
+    //     font-family: "Helvetica", "Arial", "lucida grande", sans-serif;
+    //     // line-height: 3.5;
+    //     text-align: right;
+    //     color: #a7a7a7;
+    //     box-sizing: border-box;
+    //     text-transform: uppercase;
+    // }
     &__timer {
         padding-right: 10px !important;
         &__time {
-            color: #444;
+            color: #a7a7a7;
             text-align: right;
             margin-inline-start: 10px !important;
             height: calc(720px / 25);
-            p {
-                height: 100%;
+            &:nth-of-type(odd) {
+                font-weight: bold;
+                color: #444;
             }
         }
     }

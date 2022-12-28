@@ -62,11 +62,7 @@ const handleEvents = (events = []) => {
   }
   for (let i = 0; i < events.length; i++) {
     let event = events[i];
-    if (event.start > event.end) {
-      let temp = event.start;
-      event.start = event.end;
-      event.end = temp;
-    }
+
     for (let j = event.start; j < event.end; j++) {
       timeSlots[j].push(event.id);
     }

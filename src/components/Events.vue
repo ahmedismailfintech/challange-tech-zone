@@ -17,10 +17,10 @@
         {{ events }}
         <eventItem
           :style="{
-            top: `${event.pxy}px`,
-            left: `${event.pxx}px`,
-            height: `${event.pxh}px`,
-            width: `${event.pxw}px`
+            top: `${event.top}px`,
+            left: `${event.left}px`,
+            height: `${event.height}px`,
+            width: `${event.width}px`
           }"
         />
       </template>
@@ -67,18 +67,18 @@ const handleEvents = (events = []) => {
       timeSlots[j].push(event.id);
     }
   }
+  console.log(timeSlots);
   for (let i = 0; i < 720; i++) {
     let next_index = 0;
     let timeSlotsLength = timeSlots[i].length;
-
     if (timeSlotsLength > 0) {
       for (let j = 0; j < timeSlotsLength; j++) {
         let event = events[timeSlots[i][j] - 1];
         if (!event.cevc || event.cevc < timeSlotsLength) {
           event.cevc = timeSlotsLength;
 
-          if (!event.hindex) {
-            event.hindex = next_index;
+          if (!event.currentIndex) {
+            event.currentIndex = next_index;
 
             next_index++;
           }
@@ -88,15 +88,14 @@ const handleEvents = (events = []) => {
   }
   for (let i = 0; i < events.length; i++) {
     let event = events[i];
-    event.pxh = event.end - event.start;
-    event.pxy = event.start;
-
-    event.pxw = container_width / event.cevc;
-
-    event.pxx = event.hindex * event.pxw + start_from_left;
+    event.height = event.end - event.start;
+    event.top = event.start;
+    event.width = container_width / event.cevc;
+    event.left = event.currentIndex * event.width + start_from_left;
   }
   items.push(...events);
 };
+console.log(items);
 getEvents();
 generateTimeLine();
 </script>

@@ -97,9 +97,7 @@ const handleEvents = (events = []) => {
 
     event.pxw = container_width / event.cevc;
 
-    // Height uses the same calendar/cevc figure,
-    // multiplied by the horizontal index to prevent overlap.
-    event.pxx = event.hindex * event.pxw;
+    event.pxx = event.hindex * event.pxw + start_from_left;
   }
   items.push(...events);
 };

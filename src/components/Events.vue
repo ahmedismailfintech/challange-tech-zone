@@ -67,14 +67,18 @@ const handleEvents = (events = []) => {
       timeSlots[j].push(event.id);
     }
   }
+
   for (let i = 0; i < 720; i++) {
     let next_index = 0;
     let timeSlotsLength = timeSlots[i].length;
     if (timeSlotsLength > 0) {
       for (let j = 0; j < timeSlotsLength; j++) {
         let event = events[timeSlots[i][j] - 1];
-        if (!event.cevc || event.cevc < timeSlotsLength) {
-          event.cevc = timeSlotsLength;
+        if (
+          !event.sharedEventCount ||
+          event.sharedEventCount < timeSlotsLength
+        ) {
+          event.sharedEventCount = timeSlotsLength;
 
           if (!event.currentIndex) {
             event.currentIndex = next_index;
@@ -89,12 +93,11 @@ const handleEvents = (events = []) => {
     let event = events[i];
     event.height = event.end - event.start;
     event.top = event.start;
-    event.width = container_width / event.cevc;
+    event.width = container_width / event.sharedEventCount;
     event.left = event.currentIndex * event.width + start_from_left;
   }
   items.push(...events);
 };
-console.log(items);
 getEvents();
 generateTimeLine();
 </script>
